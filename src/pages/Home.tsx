@@ -5,17 +5,23 @@ const Home = () => {
         Ana Sayfa
       </h1>
       <p className="text-gray-600 text-lg leading-relaxed">
-        Tekin Ticaret Veresiye Defteri uygulamasına hoş geldiniz. Bu uygulama sayesinde müşteri borçlarınızı kolayca takip edebilir, hesaplarınızı güvenle yönetebilirsiniz.
+        Tekin Ticaret Veresiye Defteri uygulamasına hoş geldiniz. Bu uygulama
+        sayesinde müşteri borçlarınızı kolayca takip edebilir, hesaplarınızı
+        güvenle yönetebilirsiniz.
       </p>
-      
+
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="p-6 bg-[#E2E8CE]/30 rounded-xl border border-[#E2E8CE] hover:shadow-md transition-shadow">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Hızlı İşlem</h2>
-          <p className="text-gray-600">Yakında buraya hızlı işlem kısayolları eklenecek.</p>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">
+            Yapılabilecekler
+          </h2>
+          <p className="text-gray-600">
+            İsterseniz buraya ürünlerinizi listeleyebiliz
+          </p>
         </div>
         <div className="p-6 bg-[#E2E8CE]/30 rounded-xl border border-[#E2E8CE] hover:shadow-md transition-shadow">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Özet Durum</h2>
-          <p className="text-gray-600">Yakında buraya hesap özetiniz eklenecek.</p>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Yapan Kişi</h2>
+          <p className="text-gray-600">Melih Can DEMİR</p>
         </div>
       </div>
     </div>
