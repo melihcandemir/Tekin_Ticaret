@@ -6,6 +6,7 @@ import Contact from './pages/Contact';
 import Login from './pages/Login';
 import VeresiyeDefteri from './pages/VeresiyeDefteri';
 import MusteriDetay from './pages/MusteriDetay';
+import AdminProducts from './pages/AdminProducts';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/veresiye" element={<VeresiyeDefteri />} />
               <Route path="/musteri/:id" element={<MusteriDetay />} />
+              <Route path="/admin-products" element={<AdminProducts />} />
             </Routes>
           </main>
           <Footer />

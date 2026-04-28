@@ -50,6 +50,12 @@ const Navbar = () => {
                 >
                   Veresiye Defteri
                 </Link>
+                <Link
+                  to="/admin-products"
+                  className="text-gray-700 hover:text-[#FF8C00] hover:bg-[#E2E8CE]/60 px-4 py-2 rounded-xl text-md font-semibold transition-all duration-200"
+                >
+                  Ürün Yönetimi
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="ml-4 bg-[#FF8C00] hover:bg-[#e67e00] text-white px-4 py-2 rounded-xl text-md font-bold transition-all duration-200 shadow-md hover:-translate-y-0.5"
@@ -111,6 +117,13 @@ const Navbar = () => {
                 className="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700 hover:text-[#FF8C00] hover:bg-[#E2E8CE]/60 transition-colors"
               >
                 Veresiye Defteri
+              </Link>
+              <Link
+                to="/admin-products"
+                onClick={() => setIsOpen(false)}
+                className="block px-4 py-3 rounded-xl text-base font-semibold text-gray-700 hover:text-[#FF8C00] hover:bg-[#E2E8CE]/60 transition-colors"
+              >
+                Ürün Yönetimi
               </Link>
               <button
                 onClick={() => {
