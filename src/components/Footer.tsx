@@ -34,13 +34,13 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/ledger"
+                  to="/login"
                   className="text-gray-600 hover:text-[#FF8C00] transition-colors duration-200 inline-flex items-center group"
                 >
                   <span className="mr-2 text-[#FF8C00] group-hover:translate-x-1 transition-transform">
                     →
                   </span>{" "}
-                  Veresiye Defteri
+                  Defter
                 </Link>
               </li>
               <li>

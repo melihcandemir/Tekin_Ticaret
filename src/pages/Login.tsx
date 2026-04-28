@@ -6,6 +6,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -18,8 +19,9 @@ const Login = () => {
     });
 
     if (error) {
-      // Error is handled here, but as per rules, we don't console.log error messages.
+      setLoginError('E-posta veya şifre hatalı. Lütfen tekrar deneyin.');
     } else {
+      setLoginError('');
       navigate('/veresiye');
     }
     setLoading(false);
@@ -35,6 +37,12 @@ const Login = () => {
           <h2 className="text-2xl font-bold text-[#FF8C00]">Giriş Yap</h2>
           <p className="text-gray-500 mt-2">Devam etmek için lütfen giriş yapın</p>
         </div>
+
+        {loginError && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-medium text-center">
+            {loginError}
+          </div>
+        )}
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>

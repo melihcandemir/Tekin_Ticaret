@@ -42,7 +42,7 @@ const Navbar = () => {
               İletişim
             </Link>
             
-            {user ? (
+            {user && (
               <>
                 <Link
                   to="/veresiye"
@@ -57,13 +57,6 @@ const Navbar = () => {
                   Çıkış Yap
                 </button>
               </>
-            ) : (
-              <Link
-                to="/login"
-                className="ml-4 bg-[#FF8C00] hover:bg-[#e67e00] text-white px-4 py-2 rounded-xl text-md font-bold transition-all duration-200 shadow-md hover:-translate-y-0.5"
-              >
-                Giriş Yap
-              </Link>
             )}
           </div>
 
@@ -110,7 +103,7 @@ const Navbar = () => {
           >
             İletişim
           </Link>
-          {user ? (
+          {user && (
             <>
               <Link
                 to="/veresiye"
@@ -129,14 +122,6 @@ const Navbar = () => {
                 Çıkış Yap
               </button>
             </>
-          ) : (
-            <Link
-              to="/login"
-              onClick={() => setIsOpen(false)}
-              className="block px-4 py-3 rounded-xl text-base font-bold text-white bg-[#FF8C00] hover:bg-[#e67e00] transition-colors mt-2"
-            >
-              Giriş Yap
-            </Link>
           )}
         </div>
       </div>
