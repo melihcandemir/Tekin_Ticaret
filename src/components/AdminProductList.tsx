@@ -72,32 +72,16 @@ const AdminProductList = ({
                   <div className="text-sm text-gray-500 line-clamp-1">{product.description}</div>
                 </td>
                 <td className="py-3 px-4 text-center">
-                  <div className="flex items-center justify-center space-x-2">
-                    <button
-                      onClick={() => product.stock > 0 && onStockChange(product.id, product.stock - 1)}
-                      disabled={product.stock <= 0}
-                      className="w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold focus:outline-none focus:ring-2 focus:ring-gray-300"
-                      aria-label="Stok Azalt"
-                    >
-                      -
-                    </button>
-                    <span
-                      className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-bold min-w-[3rem] ${
-                        product.stock > 0
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {product.stock}
-                    </span>
-                    <button
-                      onClick={() => onStockChange(product.id, product.stock + 1)}
-                      className="w-7 h-7 flex items-center justify-center rounded-full bg-[#E2E8CE] text-[#FF8C00] hover:bg-[#d4ddbc] transition-colors font-bold focus:outline-none focus:ring-2 focus:ring-[#FF8C00]"
-                      aria-label="Stok Artır"
-                    >
-                      +
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => onStockChange(product.id, product.stock > 0 ? 0 : 1)}
+                    className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${
+                      product.stock > 0
+                        ? "bg-green-100 text-green-800 hover:bg-green-200"
+                        : "bg-red-100 text-red-800 hover:bg-red-200"
+                    }`}
+                  >
+                    {product.stock > 0 ? "Stokta Var" : "Stokta Yok"}
+                  </button>
                 </td>
                 <td className="py-3 px-4 text-right font-black text-[#FF8C00]">
                   {product.price.toLocaleString("tr-TR", {

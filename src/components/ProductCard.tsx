@@ -69,7 +69,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               inStock ? "bg-green-500" : "bg-red-500"
             }`}
           />
-          {inStock ? `Stokta (${product.stock})` : "Stok Yok"}
+          {inStock ? "Stokta" : "Stok Yok"}
         </span>
       </div>
 

@@ -107,18 +107,18 @@ const AdminProductForm = ({
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Stok Miktarı
+          <div className="flex items-center">
+            <label className="flex items-center gap-3 cursor-pointer pt-6">
+              <input
+                type="checkbox"
+                checked={stock > 0}
+                onChange={(e) => setStock(e.target.checked ? 1 : 0)}
+                className="w-5 h-5 rounded text-[#FF8C00] focus:ring-[#FF8C00] accent-[#FF8C00]"
+              />
+              <span className="text-sm font-semibold text-gray-700">
+                Ürün Stokta Var
+              </span>
             </label>
-            <input
-              type="number"
-              required
-              min="0"
-              value={stock}
-              onChange={(e) => setStock(Number(e.target.value))}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF8C00] bg-gray-50 focus:bg-white"
-            />
           </div>
 
           <div>
