@@ -44,12 +44,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <div className="bg-white rounded-2xl border border-[#E2E8CE] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col overflow-hidden group">
       {/* Resim alanı */}
-      <div className="relative h-48 bg-gradient-to-br from-[#E2E8CE]/40 to-[#E2E8CE]/10 overflow-hidden">
+      <div className="relative h-[350px] bg-gradient-to-br from-[#E2E8CE]/40 to-[#E2E8CE]/10 overflow-hidden">
         {hasImage ? (
           <img
             src={product.image_url!}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500"
             onError={() => setImgError(true)}
           />
         ) : (

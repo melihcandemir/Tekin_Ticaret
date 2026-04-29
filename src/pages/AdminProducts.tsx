@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import AdminProductForm from "../components/AdminProductForm";
 import AdminProductList from "../components/AdminProductList";
 import ConfirmModal from "../components/ConfirmModal";
+import ProductFilter from "../components/ProductFilter";
 import type { Product } from "../components/ProductCard";
 
 const AdminProducts = () => {
@@ -20,6 +21,31 @@ const AdminProducts = () => {
   
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [stockFilter, setStockFilter] = useState("all");
+  const [sortOrder, setSortOrder] = useState("newest");
+
+  const filteredProducts = useMemo(() => {
+    return products
+      .filter((p) => {
+        const query = searchQuery.toLowerCase();
+        const matchesSearch =
+          p.name.toLowerCase().includes(query) ||
+          p.description.toLowerCase().includes(query);
+
+        let matchesStock = true;
+        if (stockFilter === "inStock") matchesStock = p.stock > 0;
+        if (stockFilter === "outOfStock") matchesStock = p.stock === 0;
+
+        return matchesSearch && matchesStock;
+      })
+      .sort((a, b) => {
+        if (sortOrder === "priceAsc") return a.price - b.price;
+        if (sortOrder === "priceDesc") return b.price - a.price;
+        return 0;
+      });
+  }, [products, searchQuery, stockFilter, sortOrder]);
 
   useEffect(() => {
     if (!user) {
@@ -152,13 +178,25 @@ const AdminProducts = () => {
           isSubmitting={isSubmitting}
         />
       ) : (
-        <AdminProductList
-          products={products}
-          isLoading={isLoading}
-          onEdit={handleEdit}
-          onDelete={openDeleteModal}
-          onStockChange={handleStockChange}
-        />
+        <div className="space-y-6">
+          {!isLoading && products.length > 0 && (
+            <ProductFilter
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              stockFilter={stockFilter}
+              setStockFilter={setStockFilter}
+              sortOrder={sortOrder}
+              setSortOrder={setSortOrder}
+            />
+          )}
+          <AdminProductList
+            products={filteredProducts}
+            isLoading={isLoading}
+            onEdit={handleEdit}
+            onDelete={openDeleteModal}
+            onStockChange={handleStockChange}
+          />
+        </div>
       )}
 
       <ConfirmModal
