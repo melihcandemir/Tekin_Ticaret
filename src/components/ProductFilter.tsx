@@ -1,6 +1,9 @@
 interface ProductFilterProps {
   searchQuery: string;
   setSearchQuery: (val: string) => void;
+  categoryFilter: string;
+  setCategoryFilter: (val: string) => void;
+  categories: string[];
   stockFilter: string;
   setStockFilter: (val: string) => void;
   sortOrder: string;
@@ -10,6 +13,9 @@ interface ProductFilterProps {
 const ProductFilter = ({
   searchQuery,
   setSearchQuery,
+  categoryFilter,
+  setCategoryFilter,
+  categories,
   stockFilter,
   setStockFilter,
   sortOrder,
@@ -37,7 +43,28 @@ const ProductFilter = ({
         </div>
 
         {/* Filtreler Yan Yana */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Kategori Filtresi */}
+          <div className="w-full">
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF8C00] bg-gray-50 focus:bg-white text-sm text-gray-700 cursor-pointer appearance-none"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                backgroundPosition: "right 0.5rem center",
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "1.5em 1.5em",
+                paddingRight: "2.5rem"
+              }}
+            >
+              <option value="all">Tüm Kategoriler</option>
+              {categories.map((cat, idx) => (
+                <option key={idx} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+
           {/* Stok Durumu Filtresi */}
           <div className="w-full">
             <select

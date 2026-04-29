@@ -44,16 +44,6 @@ const MusteriDetay = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    if (id) {
-      fetchMusteriVeKayitlar();
-    }
-  }, [user, navigate, id]);
-
   const fetchMusteriVeKayitlar = async () => {
     setLoading(true);
 
@@ -84,6 +74,16 @@ const MusteriDetay = () => {
 
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (id) {
+      fetchMusteriVeKayitlar();
+    }
+  }, [user, navigate, id]);
 
   const handleProfilGuncelle = async () => {
     if (!editAd || !id) return;

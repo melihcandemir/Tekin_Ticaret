@@ -17,6 +17,7 @@ const AdminProductForm = ({
 }: AdminProductFormProps) => {
   const [name, setName] = useState(initialData?.name || "");
   const [description, setDescription] = useState(initialData?.description || "");
+  const [category, setCategory] = useState(initialData?.category || "Diğer");
   const [stock, setStock] = useState(initialData?.stock || 0);
   const [price, setPrice] = useState(initialData?.price || 0);
   const [imageUrl, setImageUrl] = useState(initialData?.image_url || "");
@@ -27,6 +28,7 @@ const AdminProductForm = ({
     if (initialData) {
       setName(initialData.name);
       setDescription(initialData.description);
+      setCategory(initialData.category || "Diğer");
       setStock(initialData.stock);
       setPrice(initialData.price);
       setImageUrl(initialData.image_url || "");
@@ -68,6 +70,7 @@ const AdminProductForm = ({
     await onSubmit({
       name,
       description,
+      category,
       stock: Number(stock),
       price: Number(price),
       image_url: uploadedUrl,
@@ -104,6 +107,20 @@ const AdminProductForm = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF8C00] bg-gray-50 focus:bg-white resize-none"
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Kategori
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="Örn: Elektronik, Giyim..."
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF8C00] bg-gray-50 focus:bg-white"
             />
           </div>
 

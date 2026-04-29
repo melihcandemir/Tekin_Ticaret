@@ -23,8 +23,14 @@ const AdminProducts = () => {
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [stockFilter, setStockFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
+
+  const categories = useMemo(() => {
+    const uniqueCats = new Set(products.map(p => p.category).filter(Boolean));
+    return Array.from(uniqueCats) as string[];
+  }, [products]);
 
   const filteredProducts = useMemo(() => {
     return products
@@ -34,26 +40,20 @@ const AdminProducts = () => {
           p.name.toLowerCase().includes(query) ||
           p.description.toLowerCase().includes(query);
 
+        const matchesCategory = categoryFilter === "all" || p.category === categoryFilter;
+
         let matchesStock = true;
         if (stockFilter === "inStock") matchesStock = p.stock > 0;
         if (stockFilter === "outOfStock") matchesStock = p.stock === 0;
 
-        return matchesSearch && matchesStock;
+        return matchesSearch && matchesCategory && matchesStock;
       })
       .sort((a, b) => {
         if (sortOrder === "priceAsc") return a.price - b.price;
         if (sortOrder === "priceDesc") return b.price - a.price;
         return 0;
       });
-  }, [products, searchQuery, stockFilter, sortOrder]);
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    fetchProducts();
-  }, [user, navigate]);
+  }, [products, searchQuery, categoryFilter, stockFilter, sortOrder]);
 
   const fetchProducts = async () => {
     setIsLoading(true);
@@ -67,6 +67,14 @@ const AdminProducts = () => {
     }
     setIsLoading(false);
   };
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    fetchProducts();
+  }, [user, navigate]);
 
   const handleOpenAddForm = () => {
     setEditingProduct(undefined);
@@ -183,6 +191,9 @@ const AdminProducts = () => {
             <ProductFilter
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
+              categoryFilter={categoryFilter}
+              setCategoryFilter={setCategoryFilter}
+              categories={categories}
               stockFilter={stockFilter}
               setStockFilter={setStockFilter}
               sortOrder={sortOrder}

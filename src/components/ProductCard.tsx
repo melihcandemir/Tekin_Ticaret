@@ -7,6 +7,7 @@ export type Product = {
   stock: number;
   price: number;
   image_url?: string | null;
+  category?: string;
 };
 
 interface ProductCardProps {
@@ -75,6 +76,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
       {/* İçerik */}
       <div className="p-5 flex flex-col flex-grow">
+        {/* Kategori Bandı */}
+        {product.category && (
+          <span className="inline-block px-2.5 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider rounded-md mb-3 w-fit">
+            {product.category}
+          </span>
+        )}
+
         {/* Ürün adı */}
         <h2 className="text-base font-bold text-gray-800 mb-1.5 group-hover:text-[#FF8C00] transition-colors duration-200 line-clamp-1">
           {product.name}

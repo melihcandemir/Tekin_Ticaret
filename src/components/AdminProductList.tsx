@@ -68,8 +68,15 @@ const AdminProductList = ({
                   )}
                 </td>
                 <td className="py-3 px-4">
-                  <div className="font-bold text-gray-800 line-clamp-1">{product.name}</div>
-                  <div className="text-sm text-gray-500 line-clamp-1">{product.description}</div>
+                  <div className="flex flex-col gap-1">
+                    <div className="font-bold text-gray-800 line-clamp-1">{product.name}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold uppercase tracking-wider rounded-md">
+                        {product.category || "Diğer"}
+                      </span>
+                      <span className="text-sm text-gray-500 line-clamp-1">{product.description}</span>
+                    </div>
+                  </div>
                 </td>
                 <td className="py-3 px-4 text-center">
                   <button

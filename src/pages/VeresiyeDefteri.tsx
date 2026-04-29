@@ -32,14 +32,6 @@ const VeresiyeDefteri = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    fetchMusteriler();
-  }, [user, navigate]);
-
   const fetchMusteriler = async () => {
     setLoading(true);
     // Fetch customers with their ledger records to calculate dynamic balance
@@ -50,10 +42,13 @@ const VeresiyeDefteri = () => {
       .order("created_at", { ascending: false });
 
     if (!musteriError && musteriData) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const formattedMusteriler = musteriData.map((m: any) => {
         const toplamBorc =
           m.veresiye
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ?.filter((v: any) => !v.is_deleted)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .reduce((acc: number, item: any) => {
               if (item.islem_tipi === "borc") return acc + Number(item.miktar);
               return acc - Number(item.miktar);
@@ -71,6 +66,14 @@ const VeresiyeDefteri = () => {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    fetchMusteriler();
+  }, [user, navigate]);
 
   const handleMusteriEkle = async (e: React.FormEvent) => {
     e.preventDefault();
