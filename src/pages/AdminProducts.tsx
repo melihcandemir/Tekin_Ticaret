@@ -184,6 +184,7 @@ const AdminProducts = () => {
           onSubmit={handleSubmit}
           onCancel={() => setIsFormOpen(false)}
           isSubmitting={isSubmitting}
+          categories={categories}
         />
       ) : (
         <div className="space-y-6">

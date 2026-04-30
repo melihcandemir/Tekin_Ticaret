@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import ConfirmModal from "../components/ConfirmModal";
+import { useAdminLog } from "../hooks/useAdminLog";
 
 type Musteri = {
   id: string;
@@ -25,6 +26,7 @@ const MusteriDetay = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { logIslem } = useAdminLog();
 
   const [musteri, setMusteri] = useState<Musteri | null>(null);
   const [kayitlar, setKayitlar] = useState<VeresiyeKayit[]>([]);
@@ -93,6 +95,13 @@ const MusteriDetay = () => {
       .eq("id", id);
 
     if (!error) {
+      await logIslem({
+        islem_tipi: 'profil_guncelle',
+        aciklama: `"${musteri?.ad}" müşteri profili güncellendi. Yeni ad: "${editAd}".`,
+        hedef_id: id,
+        hedef_adi: editAd,
+        extra: { eski_ad: musteri?.ad, yeni_ad: editAd, eski_telefon: musteri?.telefon, yeni_telefon: editTelefon },
+      });
       setMusteri((prev) =>
         prev ? { ...prev, ad: editAd, telefon: editTelefon } : null,
       );
@@ -104,7 +113,7 @@ const MusteriDetay = () => {
     e.preventDefault();
     if (!miktar || !id) return;
 
-    const { error } = await supabase.from("veresiye").insert([
+    const { data, error } = await supabase.from("veresiye").insert([
       {
         musteri_id: id,
         musteri_adi: musteri?.ad,
@@ -112,9 +121,16 @@ const MusteriDetay = () => {
         islem_tipi: islemTipi,
         aciklama: aciklama,
       },
-    ]);
+    ]).select().single();
 
-    if (!error) {
+    if (!error && data) {
+      await logIslem({
+        islem_tipi: 'veresiye_ekle',
+        aciklama: `"${musteri?.ad}" için ${islemTipi === 'borc' ? 'borç' : 'ödeme'} eklendi: ${parseFloat(miktar).toFixed(2)} ₺${aciklama ? ` (${aciklama})` : ''}.`,
+        hedef_id: data.id,
+        hedef_adi: musteri?.ad,
+        extra: { musteri_id: id, miktar: parseFloat(miktar), islem_tipi: islemTipi, aciklama },
+      });
       setMiktar("");
       setIslemTipi("borc");
       setAciklama("");
@@ -129,11 +145,19 @@ const MusteriDetay = () => {
 
   const confirmDelete = async () => {
     if (!deleteTargetId) return;
+    const hedefKayit = kayitlar.find((k) => k.id === deleteTargetId);
     const { error } = await supabase
       .from("veresiye")
       .update({ is_deleted: true })
       .eq("id", deleteTargetId);
     if (!error) {
+      await logIslem({
+        islem_tipi: 'veresiye_sil',
+        aciklama: `"${musteri?.ad}" müşterisine ait ${hedefKayit?.islem_tipi === 'borc' ? 'borç' : 'ödeme'} kaydı silindi: ${Number(hedefKayit?.miktar ?? 0).toFixed(2)} ₺.`,
+        hedef_id: deleteTargetId,
+        hedef_adi: musteri?.ad,
+        extra: { musteri_id: id, miktar: hedefKayit?.miktar, islem_tipi: hedefKayit?.islem_tipi },
+      });
       fetchMusteriVeKayitlar();
     }
     setIsDeleteModalOpen(false);
@@ -320,33 +344,35 @@ const MusteriDetay = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-[#E2E8CE] text-gray-600">
+                <tr className="bg-gray-50 border-b border-[#E2E8CE] text-gray-600">
                   <th className="py-4 px-4 font-semibold">Tarih</th>
                   <th className="py-4 px-4 font-semibold">İşlem Tipi</th>
                   <th className="py-4 px-4 font-semibold">Açıklama</th>
                   <th className="py-4 px-4 font-semibold text-right">Miktar</th>
-                  <th className="py-4 px-4 font-semibold text-center">Sil</th>
+                  <th className="py-4 px-4 font-semibold text-center">İşlemler</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-[#E2E8CE]/50">
                 {kayitlar.map((kayit) => (
                   <tr
                     key={kayit.id}
-                    className="border-b border-[#E2E8CE]/50 hover:bg-[#E2E8CE]/20 transition-colors"
+                    className="hover:bg-[#E2E8CE]/10 transition-colors"
                   >
-                    <td className="py-4 px-4 text-sm text-gray-600">
+                    <td className="py-4 px-4 text-gray-800 text-sm font-medium">
                       {new Date(kayit.created_at).toLocaleDateString("tr-TR")}{" "}
-                      {new Date(kayit.created_at).toLocaleTimeString("tr-TR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      <span className="text-gray-500 text-xs ml-1">
+                        {new Date(kayit.created_at).toLocaleTimeString("tr-TR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
                     </td>
                     <td className="py-4 px-4">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-bold ${
+                        className={`font-black text-sm px-3 py-1 rounded-lg inline-block shadow-sm whitespace-nowrap border ${
                           kayit.islem_tipi === "borc"
-                            ? "bg-red-100 text-red-700"
-                            : "bg-green-100 text-green-700"
+                            ? "text-red-600 bg-red-50 border-red-100"
+                            : "text-green-600 bg-green-50 border-green-100"
                         }`}
                       >
                         {kayit.islem_tipi === "borc" ? "Borç" : "Ödeme"}
@@ -356,7 +382,7 @@ const MusteriDetay = () => {
                       {kayit.aciklama || "-"}
                     </td>
                     <td
-                      className={`py-4 px-4 text-right font-bold ${
+                      className={`py-4 px-4 text-right font-bold text-base ${
                         kayit.islem_tipi === "borc"
                           ? "text-red-600"
                           : "text-green-600"
@@ -365,13 +391,16 @@ const MusteriDetay = () => {
                       {kayit.islem_tipi === "borc" ? "+" : "-"}
                       {Number(kayit.miktar).toFixed(2)} ₺
                     </td>
-                    <td className="py-4 px-4 text-center">
-                      <button
-                        onClick={() => openDeleteModal(kayit.id)}
-                        className="text-red-500 hover:text-red-700 text-sm font-semibold"
-                      >
-                        Sil
-                      </button>
+                    <td className="py-4 px-4">
+                      <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+                        <button
+                          onClick={() => openDeleteModal(kayit.id)}
+                          className="w-full sm:w-auto px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-100 transition-colors border border-red-100 flex items-center justify-center gap-1"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                          <span className="hidden lg:inline">Sil</span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Footer = () => {
+  const { user } = useAuth();
+
   return (
     <footer className="bg-white border-t-2 border-[#E2E8CE] pt-12 pb-8 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,7 +37,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/login"
+                  to={user ? "/veresiye" : "/login"}
                   className="text-gray-600 hover:text-[#FF8C00] transition-colors duration-200 inline-flex items-center group"
                 >
                   <span className="mr-2 text-[#FF8C00] group-hover:translate-x-1 transition-transform">

@@ -7,6 +7,7 @@ interface AdminProductFormProps {
   onSubmit: (data: Omit<Product, "id">) => Promise<void>;
   onCancel: () => void;
   isSubmitting: boolean;
+  categories?: string[];
 }
 
 const AdminProductForm = ({
@@ -14,10 +15,13 @@ const AdminProductForm = ({
   onSubmit,
   onCancel,
   isSubmitting,
+  categories = [],
 }: AdminProductFormProps) => {
   const [name, setName] = useState(initialData?.name || "");
-  const [description, setDescription] = useState(initialData?.description || "");
-  const [category, setCategory] = useState(initialData?.category || "Diğer");
+  const [description, setDescription] = useState(
+    initialData?.description || "",
+  );
+  const [category, setCategory] = useState(initialData?.category || "");
   const [stock, setStock] = useState(initialData?.stock || 0);
   const [price, setPrice] = useState(initialData?.price || 0);
   const [imageUrl, setImageUrl] = useState(initialData?.image_url || "");
@@ -28,7 +32,7 @@ const AdminProductForm = ({
     if (initialData) {
       setName(initialData.name);
       setDescription(initialData.description);
-      setCategory(initialData.category || "Diğer");
+      setCategory(initialData.category || "");
       setStock(initialData.stock);
       setPrice(initialData.price);
       setImageUrl(initialData.image_url || "");
@@ -45,12 +49,12 @@ const AdminProductForm = ({
     if (!imageFile) return imageUrl || null;
 
     setUploadingImage(true);
-    const fileExt = imageFile.name.split('.').pop();
+    const fileExt = imageFile.name.split(".").pop();
     const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
     const filePath = `${fileName}`;
 
     const { error: uploadError } = await supabase.storage
-      .from('product-images')
+      .from("product-images")
       .upload(filePath, imageFile);
 
     setUploadingImage(false);
@@ -59,14 +63,16 @@ const AdminProductForm = ({
       return imageUrl || null;
     }
 
-    const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
+    const { data } = supabase.storage
+      .from("product-images")
+      .getPublicUrl(filePath);
     return data.publicUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const uploadedUrl = await uploadImage();
-    
+
     await onSubmit({
       name,
       description,
@@ -117,11 +123,17 @@ const AdminProductForm = ({
             <input
               type="text"
               required
-              placeholder="Örn: Elektronik, Giyim..."
+              list="category-list"
+              placeholder="Örn: Süt Grubu, Besi Grubu..."
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF8C00] bg-gray-50 focus:bg-white"
             />
+            <datalist id="category-list">
+              {categories.map((cat, index) => (
+                <option key={index} value={cat} />
+              ))}
+            </datalist>
           </div>
 
           <div className="flex items-center">
@@ -165,13 +177,20 @@ const AdminProductForm = ({
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF8C00] bg-gray-50 focus:bg-white file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-[#E2E8CE] file:text-gray-700 hover:file:bg-gray-200 transition-all cursor-pointer"
               />
               <p className="text-xs text-gray-500 font-medium">
-                <strong className="text-[#FF8C00]">Not:</strong> Tasarıma tam oturması ve kartların düzgün görünmesi için yükleyeceğiniz görsellerin yatay (tercihen 16:9 veya 4:3 oranında) olmasına dikkat ediniz. Önerilen minimum boyut: 800x600 pikseldir.
+                <strong className="text-[#FF8C00]">Not:</strong> Tasarıma tam
+                oturması ve kartların düzgün görünmesi için yükleyeceğiniz
+                görsellerin yatay (tercihen 16:9 veya 4:3 oranında) olmasına
+                dikkat ediniz. Önerilen minimum boyut: 800x600 pikseldir.
               </p>
             </div>
             {imageUrl && !imageFile && (
               <div className="mt-3">
                 <p className="text-xs text-gray-500 mb-2">Mevcut Görsel:</p>
-                <img src={imageUrl} alt="Mevcut" className="h-24 w-auto rounded-lg object-cover border border-[#E2E8CE]" />
+                <img
+                  src={imageUrl}
+                  alt="Mevcut"
+                  className="h-24 w-auto rounded-lg object-cover border border-[#E2E8CE]"
+                />
               </div>
             )}
           </div>
@@ -193,7 +212,13 @@ const AdminProductForm = ({
             disabled={isSubmitting || uploadingImage}
             className="px-6 py-3 bg-[#FF8C00] text-white rounded-xl font-bold hover:bg-[#e67e00] shadow-md transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
           >
-            {uploadingImage ? "Görsel Yükleniyor..." : isSubmitting ? "Kaydediliyor..." : initialData ? "Güncelle" : "Ekle"}
+            {uploadingImage
+              ? "Görsel Yükleniyor..."
+              : isSubmitting
+                ? "Kaydediliyor..."
+                : initialData
+                  ? "Güncelle"
+                  : "Ekle"}
           </button>
         </div>
       </form>

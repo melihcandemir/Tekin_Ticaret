@@ -12,6 +12,7 @@ export type Product = {
 
 interface ProductCardProps {
   product: Product;
+  onClick?: () => void;
 }
 
 /* Resim yoksa gösterilecek placeholder icon */
@@ -37,13 +38,16 @@ const PlaceholderIcon = () => (
   </div>
 );
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductCard = ({ product, onClick }: ProductCardProps) => {
   const inStock = product.stock > 0;
   const [imgError, setImgError] = useState(false);
   const hasImage = !!product.image_url && !imgError;
 
   return (
-    <div className="bg-white rounded-2xl border border-[#E2E8CE] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col overflow-hidden group">
+    <div 
+      className={`bg-white rounded-2xl border border-[#E2E8CE] shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col overflow-hidden group ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
       {/* Resim alanı */}
       <div className="relative h-[350px] bg-gradient-to-br from-[#E2E8CE]/40 to-[#E2E8CE]/10 overflow-hidden">
         {hasImage ? (

@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import ProductCard, { type Product } from "../components/ProductCard";
 import ProductFilter from "../components/ProductFilter";
+import ProductDetailModal from "../components/ProductDetailModal";
 import { supabase } from "../lib/supabase";
 
 const Home = () => {
@@ -11,6 +12,21 @@ const Home = () => {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [stockFilter, setStockFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("newest");
+
+  // Modal states
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    // Küçük bir gecikme ile ürünü temizliyoruz ki modal kapanırken içerik kaybolmasın (animasyon için)
+    setTimeout(() => setSelectedProduct(null), 300);
+  };
 
   const categories = useMemo(() => {
     const uniqueCats = new Set(products.map(p => p.category).filter(Boolean));
@@ -102,10 +118,21 @@ const Home = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard 
+              key={product.id} 
+              product={product} 
+              onClick={() => handleProductClick(product)}
+            />
           ))}
         </div>
       )}
+
+      {/* Ürün Detay Modalı */}
+      <ProductDetailModal
+        product={selectedProduct}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      />
     </div>
   );
 };

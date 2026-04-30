@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
+import { useAdminLog } from "../hooks/useAdminLog";
 
 type Musteri = {
   id: string;
@@ -18,6 +19,7 @@ type MusteriWithBalance = Musteri & {
 const VeresiyeDefteri = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { logIslem } = useAdminLog();
   const [musteriler, setMusteriler] = useState<MusteriWithBalance[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -79,11 +81,19 @@ const VeresiyeDefteri = () => {
     e.preventDefault();
     if (!ad) return;
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("musteriler")
-      .insert([{ ad, telefon }]);
+      .insert([{ ad, telefon }])
+      .select()
+      .single();
 
-    if (!error) {
+    if (!error && data) {
+      await logIslem({
+        islem_tipi: 'musteri_ekle',
+        aciklama: `"${ad}" adlı müşteri eklendi.`,
+        hedef_id: data.id,
+        hedef_adi: ad,
+      });
       setAd("");
       setTelefon("");
       fetchMusteriler();
@@ -97,11 +107,18 @@ const VeresiyeDefteri = () => {
 
   const confirmDelete = async () => {
     if (!deleteTargetId) return;
+    const hedefMusteri = musteriler.find((m) => m.id === deleteTargetId);
     const { error } = await supabase
       .from("musteriler")
       .update({ is_deleted: true })
       .eq("id", deleteTargetId);
     if (!error) {
+      await logIslem({
+        islem_tipi: 'musteri_sil',
+        aciklama: `"${hedefMusteri?.ad ?? deleteTargetId}" adlı müşteri silindi.`,
+        hedef_id: deleteTargetId,
+        hedef_adi: hedefMusteri?.ad,
+      });
       fetchMusteriler();
     }
     setIsDeleteModalOpen(false);
@@ -212,7 +229,7 @@ const VeresiyeDefteri = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-[#E2E8CE] text-gray-600">
+                <tr className="bg-gray-50 border-b border-[#E2E8CE] text-gray-600">
                   <th className="py-4 px-4 font-semibold">Müşteri Adı</th>
                   <th className="py-4 px-4 font-semibold">Telefon</th>
                   <th className="py-4 px-4 font-semibold text-right">
@@ -223,7 +240,7 @@ const VeresiyeDefteri = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-[#E2E8CE]/50">
                 {filtrelenmisMusteriler.length === 0 && aramaMetni ? (
                   <tr>
                     <td colSpan={4} className="py-8 text-center text-gray-500">
@@ -234,42 +251,46 @@ const VeresiyeDefteri = () => {
                   filtrelenmisMusteriler.map((musteri) => (
                     <tr
                       key={musteri.id}
-                      className="border-b border-[#E2E8CE]/50 hover:bg-[#E2E8CE]/20 transition-colors"
+                      className="hover:bg-[#E2E8CE]/10 transition-colors"
                     >
-                      <td className="py-4 px-4 font-bold text-gray-800">
+                      <td className="py-4 px-4 font-bold text-gray-800 text-base">
                         {musteri.ad}
                       </td>
-                      <td className="py-4 px-4 text-gray-600">
+                      <td className="py-4 px-4 text-gray-600 text-sm">
                         {musteri.telefon || "-"}
                       </td>
-                      <td
-                        className={`py-4 px-4 text-right font-black ${
-                          musteri.toplamBorc > 0
-                            ? "text-red-600"
-                            : musteri.toplamBorc < 0
-                              ? "text-green-600"
-                              : "text-gray-500"
-                        }`}
-                      >
-                        {musteri.toplamBorc > 0
-                          ? `${musteri.toplamBorc.toFixed(2)} ₺ Borçlu`
-                          : musteri.toplamBorc < 0
-                            ? `${Math.abs(musteri.toplamBorc).toFixed(2)} ₺ Alacaklı`
-                            : "0.00 ₺"}
+                      <td className="py-4 px-4 text-right">
+                        {musteri.toplamBorc > 0 ? (
+                          <span className="font-black text-red-600 text-sm bg-red-50 border border-red-100 px-3 py-1 rounded-lg inline-block shadow-sm whitespace-nowrap">
+                            {musteri.toplamBorc.toFixed(2)} ₺ Borçlu
+                          </span>
+                        ) : musteri.toplamBorc < 0 ? (
+                          <span className="font-black text-green-600 text-sm bg-green-50 border border-green-100 px-3 py-1 rounded-lg inline-block shadow-sm whitespace-nowrap">
+                            {Math.abs(musteri.toplamBorc).toFixed(2)} ₺ Alacaklı
+                          </span>
+                        ) : (
+                          <span className="font-black text-gray-500 text-sm bg-gray-50 border border-gray-200 px-3 py-1 rounded-lg inline-block shadow-sm whitespace-nowrap">
+                            0.00 ₺
+                          </span>
+                        )}
                       </td>
-                      <td className="py-4 px-4 text-center space-x-3">
-                        <Link
-                          to={`/musteri/${musteri.id}`}
-                          className="px-4 py-2 bg-[#E2E8CE] text-gray-700 rounded-lg font-semibold hover:bg-gray-200 transition-colors inline-block"
-                        >
-                          Profil & İşlem Geçmişi
-                        </Link>
-                        <button
-                          onClick={() => openDeleteModal(musteri.id)}
-                          className="px-4 py-2 bg-red-50 text-red-600 rounded-lg font-semibold hover:bg-red-100 transition-colors inline-block"
-                        >
-                          Sil
-                        </button>
+                      <td className="py-4 px-4">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
+                          <Link
+                            to={`/musteri/${musteri.id}`}
+                            className="w-full sm:w-auto px-4 py-2 bg-blue-50 text-blue-600 rounded-lg text-sm font-semibold hover:bg-blue-100 transition-colors border border-blue-100 flex items-center justify-center gap-1"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            <span className="hidden lg:inline">Profil</span>
+                          </Link>
+                          <button
+                            onClick={() => openDeleteModal(musteri.id)}
+                            className="w-full sm:w-auto px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-100 transition-colors border border-red-100 flex items-center justify-center gap-1"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            <span className="hidden lg:inline">Sil</span>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
