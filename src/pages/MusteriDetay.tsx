@@ -24,7 +24,7 @@ type VeresiyeKayit = {
 
 const MusteriDetay = () => {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { logIslem } = useAdminLog();
 
@@ -78,14 +78,14 @@ const MusteriDetay = () => {
   };
 
   useEffect(() => {
-    if (!user) {
+    if (!authLoading && !user) {
       navigate("/login");
       return;
     }
-    if (id) {
+    if (user && id) {
       fetchMusteriVeKayitlar();
     }
-  }, [user, navigate, id]);
+  }, [user, authLoading, navigate, id]);
 
   const handleProfilGuncelle = async () => {
     if (!editAd || !id) return;

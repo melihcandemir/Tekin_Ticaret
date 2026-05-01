@@ -27,6 +27,7 @@ const AdminProductForm = ({
   const [imageUrl, setImageUrl] = useState(initialData?.image_url || "");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -116,24 +117,58 @@ const AdminProductForm = ({
             />
           </div>
 
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 relative">
             <label className="block text-sm font-semibold text-gray-700 mb-1">
               Kategori
             </label>
-            <input
-              type="text"
-              required
-              list="category-list"
-              placeholder="Örn: Süt Grubu, Besi Grubu..."
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF8C00] bg-gray-50 focus:bg-white"
-            />
-            <datalist id="category-list">
-              {categories.map((cat, index) => (
-                <option key={index} value={cat} />
-              ))}
-            </datalist>
+            <div className="relative">
+              <input
+                type="text"
+                required
+                placeholder="Listeden seçin veya yeni yazın..."
+                value={category}
+                onChange={(e) => {
+                  setCategory(e.target.value);
+                  setIsCategoryDropdownOpen(true);
+                }}
+                onFocus={() => setIsCategoryDropdownOpen(true)}
+                onBlur={() => setTimeout(() => setIsCategoryDropdownOpen(false), 200)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#FF8C00] bg-gray-50 focus:bg-white text-gray-700 pr-10"
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </div>
+            {isCategoryDropdownOpen && (
+              <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+                {categories.length > 0 && categories
+                  .filter((cat) => cat.toLowerCase().includes(category.toLowerCase()))
+                  .map((cat, index) => (
+                    <div
+                      key={index}
+                      className="px-4 py-3 hover:bg-[#FF8C00]/10 cursor-pointer text-gray-700 transition-colors"
+                      onClick={() => {
+                        setCategory(cat);
+                        setIsCategoryDropdownOpen(false);
+                      }}
+                    >
+                      {cat}
+                    </div>
+                  ))}
+                {category && !categories.some(c => c.toLowerCase() === category.toLowerCase()) && (
+                  <div className="px-4 py-3 text-sm text-[#FF8C00] font-medium italic bg-[#FF8C00]/5">
+                    "{category}" yeni kategori olarak eklenecek
+                  </div>
+                )}
+                {categories.length === 0 && !category && (
+                   <div className="px-4 py-3 text-sm text-gray-500 italic">
+                     Henüz kategori yok, yazarak ekleyebilirsiniz.
+                   </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center">

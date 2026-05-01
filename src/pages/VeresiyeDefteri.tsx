@@ -17,7 +17,7 @@ type MusteriWithBalance = Musteri & {
 };
 
 const VeresiyeDefteri = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { logIslem } = useAdminLog();
   const [musteriler, setMusteriler] = useState<MusteriWithBalance[]>([]);
@@ -70,12 +70,14 @@ const VeresiyeDefteri = () => {
   };
 
   useEffect(() => {
-    if (!user) {
+    if (!authLoading && !user) {
       navigate("/login");
       return;
     }
-    fetchMusteriler();
-  }, [user, navigate]);
+    if (user) {
+      fetchMusteriler();
+    }
+  }, [user, authLoading, navigate]);
 
   const handleMusteriEkle = async (e: React.FormEvent) => {
     e.preventDefault();

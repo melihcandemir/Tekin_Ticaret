@@ -9,7 +9,7 @@ import ProductFilter from "../components/ProductFilter";
 import type { Product } from "../components/ProductCard";
 
 const AdminProducts = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   
   const [products, setProducts] = useState<Product[]>([]);
@@ -69,12 +69,14 @@ const AdminProducts = () => {
   };
 
   useEffect(() => {
-    if (!user) {
+    if (!authLoading && !user) {
       navigate("/login");
       return;
     }
-    fetchProducts();
-  }, [user, navigate]);
+    if (user) {
+      fetchProducts();
+    }
+  }, [user, authLoading, navigate]);
 
   const handleOpenAddForm = () => {
     setEditingProduct(undefined);
