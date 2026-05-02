@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 const ScrollToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const toggleVisibility = () => {
@@ -12,9 +13,18 @@ const ScrollToTopButton = () => {
       }
     };
 
-    window.addEventListener('scroll', toggleVisibility);
+    const handleModalOpen = () => setIsModalOpen(true);
+    const handleModalClose = () => setIsModalOpen(false);
 
-    return () => window.removeEventListener('scroll', toggleVisibility);
+    window.addEventListener('scroll', toggleVisibility);
+    window.addEventListener('product-modal-open', handleModalOpen);
+    window.addEventListener('product-modal-close', handleModalClose);
+
+    return () => {
+      window.removeEventListener('scroll', toggleVisibility);
+      window.removeEventListener('product-modal-open', handleModalOpen);
+      window.removeEventListener('product-modal-close', handleModalClose);
+    };
   }, []);
 
   const scrollToTop = () => {
@@ -26,7 +36,7 @@ const ScrollToTopButton = () => {
 
   return (
     <>
-      {isVisible && (
+      {isVisible && !isModalOpen && (
         <button
           onClick={scrollToTop}
           className="fixed bottom-8 right-8 p-3 rounded-full bg-[#FF8C00] text-white shadow-lg hover:bg-orange-600 transition-all duration-300 z-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FF8C00]"

@@ -20,10 +20,12 @@ const Home = () => {
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
+    window.dispatchEvent(new Event('product-modal-open'));
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+    window.dispatchEvent(new Event('product-modal-close'));
     // Küçük bir gecikme ile ürünü temizliyoruz ki modal kapanırken içerik kaybolmasın (animasyon için)
     setTimeout(() => setSelectedProduct(null), 300);
   };

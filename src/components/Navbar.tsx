@@ -10,7 +10,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -18,7 +18,10 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20">
           <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0 flex items-center gap-3 group">
+            <Link
+              to="/"
+              className="flex-shrink-0 flex items-center gap-3 group"
+            >
               <div className="w-10 h-10 bg-[#FF8C00] rounded-xl flex items-center justify-center text-[#FFFFFF] font-bold text-xl shadow-md group-hover:scale-105 transition-transform duration-300">
                 T
               </div>
@@ -41,7 +44,7 @@ const Navbar = () => {
             >
               İletişim
             </Link>
-            
+
             {user && (
               <>
                 <Link
@@ -88,12 +91,36 @@ const Navbar = () => {
             >
               <span className="sr-only">Ana menüyü aç</span>
               {!isOpen ? (
-                <svg className="block h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                <svg
+                  className="block h-7 w-7"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
                 </svg>
               ) : (
-                <svg className="block h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="block h-7 w-7"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               )}
             </button>
@@ -103,7 +130,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`sm:hidden overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
+        className={`sm:hidden overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-100 opacity-100" : "max-h-0 opacity-0"}`}
         id="mobile-menu"
       >
         <div className="px-4 pt-2 pb-4 space-y-2 bg-[#FFFFFF] border-b border-[#E2E8CE] shadow-inner">

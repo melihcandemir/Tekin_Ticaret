@@ -119,8 +119,8 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
           {/* Price */}
           <div className="mb-8 p-5 bg-gradient-to-br from-[#FF8C00]/10 to-transparent border border-[#FF8C00]/20 rounded-2xl">
-            <p className="text-sm font-semibold text-[#FF8C00] uppercase tracking-widest mb-1">
-              Fiyat
+            <p className="text-sm font-semibold text-[#FF8C00] tracking-widest mb-1">
+              FİYAT
             </p>
             <p className="text-3xl md:text-4xl font-black text-gray-900">
               {product.price.toLocaleString("tr-TR", {

@@ -99,8 +99,8 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
 
         {/* Fiyat + ayırıcı */}
         <div className="mt-4 pt-4 border-t border-[#E2E8CE] flex items-center justify-between">
-          <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">
-            Fiyat
+          <span className="text-xs font-medium text-gray-400 tracking-wide">
+            FİYAT
           </span>
           <span className="text-xl font-extrabold text-[#FF8C00]">
             {product.price.toLocaleString("tr-TR", {
