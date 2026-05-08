@@ -1,4 +1,5 @@
 import React from 'react';
+import LoadingSpinner from './LoadingSpinner';
 
 export type IslemLog = {
   id: string;
@@ -108,10 +109,7 @@ const AdminIslemLogu: React.FC<Props> = ({
 
       {/* İçerik */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-12 gap-3">
-          <div className="w-8 h-8 border-4 border-[#FF8C00] border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-gray-400 font-medium">Yükleniyor...</p>
-        </div>
+        <LoadingSpinner message="İşlem geçmişi yükleniyor..." />
       ) : gosterilecek.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 gap-3 text-gray-400">
           <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">

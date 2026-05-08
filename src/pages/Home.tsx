@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import ProductCard, { type Product } from "../components/ProductCard";
 import ProductFilter from "../components/ProductFilter";
 import ProductDetailModal from "../components/ProductDetailModal";
+import LoadingSpinner from "../components/LoadingSpinner";
 import { supabase } from "../lib/supabase";
 
 const Home = () => {
@@ -109,7 +110,9 @@ const Home = () => {
       )}
 
       {/* Ürün grid */}
-      {!loading && filteredProducts.length === 0 ? (
+      {loading ? (
+        <LoadingSpinner message="Ürünler yükleniyor..." />
+      ) : filteredProducts.length === 0 ? (
         <div className="bg-[#FFFFFF] rounded-2xl shadow-sm border border-[#E2E8CE] p-8 text-center mt-6">
           <p className="text-gray-500 text-lg">
             {products.length === 0 

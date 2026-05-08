@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import AdminIslemLogu, { type IslemLog } from '../components/AdminIslemLogu';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 type FiltreTipi = 'hepsi' | 'musteri_ekle' | 'musteri_sil' | 'veresiye_ekle' | 'veresiye_sil' | 'profil_guncelle';
 
@@ -75,7 +76,7 @@ const IslemGecmisi = () => {
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-10 h-10 border-4 border-[#FF8C00] border-t-transparent rounded-full animate-spin" />
+        <LoadingSpinner message="Giriş bilgileri kontrol ediliyor..." />
       </div>
     );
   }

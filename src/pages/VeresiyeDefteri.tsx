@@ -3,6 +3,7 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
+import LoadingSpinner from "../components/LoadingSpinner";
 import { useAdminLog } from "../hooks/useAdminLog";
 
 type Musteri = {
@@ -222,7 +223,7 @@ const VeresiyeDefteri = () => {
         )}
 
         {loading ? (
-          <p className="text-gray-500 text-center py-8">Yükleniyor...</p>
+          <LoadingSpinner message="Müşteriler yükleniyor..." />
         ) : musteriler.length === 0 ? (
           <p className="text-gray-500 text-center py-8">
             Henüz kayıtlı müşteri bulunmamaktadır.

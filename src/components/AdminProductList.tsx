@@ -1,5 +1,7 @@
 import type { Product } from "./ProductCard";
 
+import LoadingSpinner from './LoadingSpinner';
+
 interface AdminProductListProps {
   products: Product[];
   isLoading: boolean;
@@ -16,7 +18,7 @@ const AdminProductList = ({
   onStockChange,
 }: AdminProductListProps) => {
   if (isLoading) {
-    return <p className="text-gray-500 text-center py-8">Yükleniyor...</p>;
+    return <LoadingSpinner message="Ürünler yükleniyor..." />;
   }
 
   if (products.length === 0) {

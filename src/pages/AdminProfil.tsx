@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import AdminUserCard from '../components/AdminUserCard';
 import AdminUserForm from '../components/AdminUserForm';
 import ConfirmModal from '../components/ConfirmModal';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 type AdminUser = {
   id: string;
@@ -150,7 +151,7 @@ const AdminProfil = () => {
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-10 h-10 border-4 border-[#FF8C00] border-t-transparent rounded-full animate-spin"></div>
+        <LoadingSpinner message="Giriş bilgileri kontrol ediliyor..." />
       </div>
     );
   }
@@ -218,10 +219,7 @@ const AdminProfil = () => {
 
       {/* User List */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-4">
-          <div className="w-10 h-10 border-4 border-[#FF8C00] border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-500 font-medium">Adminler yükleniyor...</p>
-        </div>
+        <LoadingSpinner message="Adminler yükleniyor..." />
       ) : users.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4 text-gray-400">
           <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">

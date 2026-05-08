@@ -172,7 +172,7 @@ const MusteriDetay = () => {
   if (!user) return null;
 
   if (loading) {
-    return <p className="text-center py-8 text-gray-500">Yükleniyor...</p>;
+    return <LoadingSpinner message="Müşteri bilgileri yükleniyor..." />;
   }
 
   if (!musteri) {
